@@ -20,5 +20,6 @@ defmodule Inventory.Repo.Migrations.CreateWarehouses do
 
     create index(:warehouses, [:company_id])
     create unique_index(:warehouses, [:address])
+    create unique_index(:warehouses, [:id, :tenant_id])
   end
 end
