@@ -7,6 +7,7 @@ defmodule InventoryWeb.Router do
 
   scope "/api", InventoryWeb do
     pipe_through :api
+    resources "/companies", CompanyController, except: [:new, :edit]
   end
 
   # Enables the Swoosh mailbox preview in development.
