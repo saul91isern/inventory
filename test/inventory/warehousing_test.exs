@@ -21,11 +21,12 @@ defmodule Inventory.WarehousingTest do
     end
 
     test "create_company/1 with valid data creates a company" do
-      valid_attrs = %{name: "some name", tenant_id: "7488a646-e31f-11e4-aace-600308960662"}
+      tenant_id = Ecto.UUID.generate()
+      valid_attrs = %{name: "some name", tenant_id: tenant_id}
 
       assert {:ok, %Company{} = company} = Warehousing.create_company(valid_attrs)
       assert company.name == "some name"
-      assert company.tenant_id == "7488a646-e31f-11e4-aace-600308960662"
+      assert company.tenant_id == tenant_id
     end
 
     test "create_company/1 with invalid data returns error changeset" do
@@ -33,12 +34,13 @@ defmodule Inventory.WarehousingTest do
     end
 
     test "update_company/2 with valid data updates the company" do
+      tenant_id = Ecto.UUID.generate()
       company = company_fixture()
-      update_attrs = %{name: "some updated name", tenant_id: "7488a646-e31f-11e4-aace-600308960668"}
+      update_attrs = %{name: "some updated name", tenant_id: tenant_id}
 
       assert {:ok, %Company{} = company} = Warehousing.update_company(company, update_attrs)
       assert company.name == "some updated name"
-      assert company.tenant_id == "7488a646-e31f-11e4-aace-600308960668"
+      assert company.tenant_id == tenant_id
     end
 
     test "update_company/2 with invalid data returns error changeset" do
