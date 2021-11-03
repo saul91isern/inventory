@@ -11,7 +11,7 @@ defmodule InventoryWeb.WarehouseController do
     render(conn, "index.json", warehouses: warehouses)
   end
 
-  def create(conn, %{"warehouse" => warehouse_params}) do
+  def create(conn, %{"data" => warehouse_params}) do
     with {:ok, %Warehouse{} = warehouse} <- Warehousing.create_warehouse(warehouse_params) do
       conn
       |> put_status(:created)
@@ -25,7 +25,7 @@ defmodule InventoryWeb.WarehouseController do
     render(conn, "show.json", warehouse: warehouse)
   end
 
-  def update(conn, %{"id" => id, "warehouse" => warehouse_params}) do
+  def update(conn, %{"id" => id, "data" => warehouse_params}) do
     warehouse = Warehousing.get_warehouse!(id)
 
     with {:ok, %Warehouse{} = warehouse} <- Warehousing.update_warehouse(warehouse, warehouse_params) do

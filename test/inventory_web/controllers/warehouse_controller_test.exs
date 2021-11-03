@@ -30,7 +30,7 @@ defmodule InventoryWeb.WarehouseControllerTest do
 
   describe "create warehouse" do
     test "renders warehouse when data is valid", %{conn: conn} do
-      conn = post(conn, Routes.warehouse_path(conn, :create), warehouse: @create_attrs)
+      conn = post(conn, Routes.warehouse_path(conn, :create), data: @create_attrs)
       assert %{"id" => id} = json_response(conn, 201)["data"]
 
       conn = get(conn, Routes.warehouse_path(conn, :show, id))
@@ -44,7 +44,7 @@ defmodule InventoryWeb.WarehouseControllerTest do
     end
 
     test "renders errors when data is invalid", %{conn: conn} do
-      conn = post(conn, Routes.warehouse_path(conn, :create), warehouse: @invalid_attrs)
+      conn = post(conn, Routes.warehouse_path(conn, :create), data: @invalid_attrs)
       assert json_response(conn, 422)["errors"] != %{}
     end
   end
@@ -56,7 +56,7 @@ defmodule InventoryWeb.WarehouseControllerTest do
       conn: conn,
       warehouse: %Warehouse{id: id} = warehouse
     } do
-      conn = put(conn, Routes.warehouse_path(conn, :update, warehouse), warehouse: @update_attrs)
+      conn = put(conn, Routes.warehouse_path(conn, :update, warehouse), data: @update_attrs)
       assert %{"id" => ^id} = json_response(conn, 200)["data"]
 
       conn = get(conn, Routes.warehouse_path(conn, :show, id))
@@ -70,7 +70,7 @@ defmodule InventoryWeb.WarehouseControllerTest do
     end
 
     test "renders errors when data is invalid", %{conn: conn, warehouse: warehouse} do
-      conn = put(conn, Routes.warehouse_path(conn, :update, warehouse), warehouse: @invalid_attrs)
+      conn = put(conn, Routes.warehouse_path(conn, :update, warehouse), data: @invalid_attrs)
       assert json_response(conn, 422)["errors"] != %{}
     end
   end
