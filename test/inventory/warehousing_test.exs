@@ -79,7 +79,11 @@ defmodule Inventory.WarehousingTest do
     end
 
     test "create_warehouse/1 with valid data creates a warehouse" do
-      valid_attrs = %{address: "some address", name: "some name", tenant_id: "7488a646-e31f-11e4-aace-600308960662"}
+      valid_attrs = %{
+        address: "some address",
+        name: "some name",
+        tenant_id: "7488a646-e31f-11e4-aace-600308960662"
+      }
 
       assert {:ok, %Warehouse{} = warehouse} = Warehousing.create_warehouse(valid_attrs)
       assert warehouse.address == "some address"
@@ -93,9 +97,16 @@ defmodule Inventory.WarehousingTest do
 
     test "update_warehouse/2 with valid data updates the warehouse" do
       warehouse = warehouse_fixture()
-      update_attrs = %{address: "some updated address", name: "some updated name", tenant_id: "7488a646-e31f-11e4-aace-600308960668"}
 
-      assert {:ok, %Warehouse{} = warehouse} = Warehousing.update_warehouse(warehouse, update_attrs)
+      update_attrs = %{
+        address: "some updated address",
+        name: "some updated name",
+        tenant_id: "7488a646-e31f-11e4-aace-600308960668"
+      }
+
+      assert {:ok, %Warehouse{} = warehouse} =
+               Warehousing.update_warehouse(warehouse, update_attrs)
+
       assert warehouse.address == "some updated address"
       assert warehouse.name == "some updated name"
       assert warehouse.tenant_id == "7488a646-e31f-11e4-aace-600308960668"
