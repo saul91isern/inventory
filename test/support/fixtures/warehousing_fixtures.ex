@@ -34,4 +34,22 @@ defmodule Inventory.WarehousingFixtures do
 
     warehouse
   end
+
+  @doc """
+  Generate a item.
+  """
+  def item_fixture(attrs \\ %{}) do
+    {:ok, item} =
+      attrs
+      |> Enum.into(%{
+        description: "some description",
+        sku: "some sku",
+        tenant_id: "7488a646-e31f-11e4-aace-600308960662",
+        unit: "ca",
+        weight: 42
+      })
+      |> Inventory.Warehousing.create_item()
+
+    item
+  end
 end

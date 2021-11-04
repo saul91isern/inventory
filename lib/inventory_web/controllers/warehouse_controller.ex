@@ -6,8 +6,8 @@ defmodule InventoryWeb.WarehouseController do
 
   action_fallback InventoryWeb.FallbackController
 
-  def index(conn, _params) do
-    warehouses = Warehousing.list_warehouses()
+  def index(conn, params) do
+    warehouses = Warehousing.list_warehouses(params)
     render(conn, "index.json", warehouses: warehouses)
   end
 

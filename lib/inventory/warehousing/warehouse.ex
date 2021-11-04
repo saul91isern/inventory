@@ -1,7 +1,7 @@
 defmodule Inventory.Warehousing.Warehouse do
   use Ecto.Schema
   import Ecto.Changeset
-  alias Inventory.Warehousing.Company
+  alias Inventory.Warehousing.{Company, Item}
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
@@ -10,6 +10,7 @@ defmodule Inventory.Warehousing.Warehouse do
     field :name, :string
     field :tenant_id, Ecto.UUID
     belongs_to :company, Company
+    has_many :items, Item
 
     timestamps()
   end
