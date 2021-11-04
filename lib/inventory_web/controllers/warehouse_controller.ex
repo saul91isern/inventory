@@ -12,6 +12,8 @@ defmodule InventoryWeb.WarehouseController do
   end
 
   def create(conn, %{"data" => warehouse_params}) do
+    warehouse_params = put_tenant_id(warehouse_params)
+
     with {:ok, %Warehouse{} = warehouse} <- Warehousing.create_warehouse(warehouse_params) do
       conn
       |> put_status(:created)

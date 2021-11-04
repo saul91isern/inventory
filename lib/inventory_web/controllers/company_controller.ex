@@ -12,6 +12,8 @@ defmodule InventoryWeb.CompanyController do
   end
 
   def create(conn, %{"data" => company_params}) do
+    company_params = put_tenant_id(company_params)
+
     with {:ok, %Company{} = company} <- Warehousing.create_company(company_params) do
       conn
       |> put_status(:created)

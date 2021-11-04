@@ -12,6 +12,8 @@ defmodule InventoryWeb.ItemController do
   end
 
   def create(conn, %{"data" => item_params}) do
+    item_params = put_tenant_id(item_params)
+
     with {:ok, %Item{} = item} <- Warehousing.create_item(item_params) do
       conn
       |> put_status(:created)

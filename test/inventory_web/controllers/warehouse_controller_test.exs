@@ -7,18 +7,23 @@ defmodule InventoryWeb.WarehouseControllerTest do
 
   @create_attrs %{
     address: "some address",
-    name: "some name",
-    tenant_id: "7488a646-e31f-11e4-aace-600308960662"
+    name: "some name"
   }
   @update_attrs %{
     address: "some updated address",
-    name: "some updated name",
-    tenant_id: "7488a646-e31f-11e4-aace-600308960668"
+    name: "some updated name"
   }
   @invalid_attrs %{address: nil, name: nil, tenant_id: nil}
 
   setup %{conn: conn} do
-    {:ok, conn: put_req_header(conn, "accept", "application/json")}
+    tenant_id = Ecto.UUID.generate()
+
+    conn =
+      conn
+      |> put_req_header("accept", "application/json")
+      |> put_req_header("tenant-id", tenant_id)
+
+    {:ok, conn: conn, tenant_id: tenant_id}
   end
 
   describe "index" do
@@ -29,17 +34,18 @@ defmodule InventoryWeb.WarehouseControllerTest do
   end
 
   describe "create warehouse" do
-    test "renders warehouse when data is valid", %{conn: conn} do
+    test "renders warehouse when data is valid", %{conn: conn, tenant_id: tenant_id} do
       conn = post(conn, Routes.warehouse_path(conn, :create), data: @create_attrs)
       assert %{"id" => id} = json_response(conn, 201)["data"]
 
+      conn = conn |> recycle() |> put_req_header("tenant-id", tenant_id)
       conn = get(conn, Routes.warehouse_path(conn, :show, id))
 
       assert %{
                "id" => ^id,
                "address" => "some address",
                "name" => "some name",
-               "tenant_id" => "7488a646-e31f-11e4-aace-600308960662"
+               "tenant_id" => ^tenant_id
              } = json_response(conn, 200)["data"]
     end
 
@@ -54,18 +60,20 @@ defmodule InventoryWeb.WarehouseControllerTest do
 
     test "renders warehouse when data is valid", %{
       conn: conn,
-      warehouse: %Warehouse{id: id} = warehouse
+      warehouse: %Warehouse{id: id} = warehouse,
+      tenant_id: tenant_id
     } do
       conn = put(conn, Routes.warehouse_path(conn, :update, warehouse), data: @update_attrs)
       assert %{"id" => ^id} = json_response(conn, 200)["data"]
 
+      conn = conn |> recycle() |> put_req_header("tenant-id", tenant_id)
       conn = get(conn, Routes.warehouse_path(conn, :show, id))
 
       assert %{
                "id" => ^id,
                "address" => "some updated address",
                "name" => "some updated name",
-               "tenant_id" => "7488a646-e31f-11e4-aace-600308960668"
+               "tenant_id" => ^tenant_id
              } = json_response(conn, 200)["data"]
     end
 
@@ -78,9 +86,11 @@ defmodule InventoryWeb.WarehouseControllerTest do
   describe "delete warehouse" do
     setup [:create_warehouse]
 
-    test "deletes chosen warehouse", %{conn: conn, warehouse: warehouse} do
+    test "deletes chosen warehouse", %{conn: conn, warehouse: warehouse, tenant_id: tenant_id} do
       conn = delete(conn, Routes.warehouse_path(conn, :delete, warehouse))
       assert response(conn, 204)
+
+      conn = conn |> recycle() |> put_req_header("tenant-id", tenant_id)
 
       assert_error_sent 404, fn ->
         get(conn, Routes.warehouse_path(conn, :show, warehouse))
@@ -88,8 +98,10 @@ defmodule InventoryWeb.WarehouseControllerTest do
     end
   end
 
-  defp create_warehouse(_) do
-    warehouse = warehouse_fixture()
+  defp create_warehouse(assigns) do
+    attrs = %{tenant_id: assigns[:tenant_id]}
+
+    warehouse = warehouse_fixture(attrs)
     %{warehouse: warehouse}
   end
 end

@@ -23,6 +23,8 @@ defmodule InventoryWeb do
 
       import Plug.Conn
       alias InventoryWeb.Router.Helpers, as: Routes
+
+      import InventoryWeb.Helpers
     end
   end
 

@@ -3,6 +3,7 @@ defmodule InventoryWeb.Router do
 
   pipeline :api do
     plug :accepts, ["json"]
+    plug InventoryWeb.FetchTenantId
   end
 
   scope "/api", InventoryWeb do
