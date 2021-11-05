@@ -70,25 +70,29 @@ defmodule Inventory.WarehousingTest do
 
     test "list_warehouses/0 returns all warehouses" do
       warehouse = warehouse_fixture()
-      assert Warehousing.list_warehouses() == [warehouse]
+      [result] = Warehousing.list_warehouses()
+      assert Map.drop(result, [:company]) == Map.drop(warehouse, [:company])
     end
 
     test "get_warehouse!/1 returns the warehouse with given id" do
       warehouse = warehouse_fixture()
-      assert Warehousing.get_warehouse!(warehouse.id) == warehouse
+      result = Warehousing.get_warehouse!(warehouse.id)
+      assert Map.drop(result, [:company]) == Map.drop(warehouse, [:company])
     end
 
     test "create_warehouse/1 with valid data creates a warehouse" do
+      company = company_fixture()
+
       valid_attrs = %{
         address: "some address",
         name: "some name",
-        tenant_id: "7488a646-e31f-11e4-aace-600308960662"
+        tenant_id: company.tenant_id
       }
 
-      assert {:ok, %Warehouse{} = warehouse} = Warehousing.create_warehouse(valid_attrs)
+      assert {:ok, %Warehouse{} = warehouse} = Warehousing.create_warehouse(valid_attrs, company)
       assert warehouse.address == "some address"
       assert warehouse.name == "some name"
-      assert warehouse.tenant_id == "7488a646-e31f-11e4-aace-600308960662"
+      assert warehouse.tenant_id == company.tenant_id
     end
 
     test "create_warehouse/1 with invalid data returns error changeset" do
@@ -101,7 +105,7 @@ defmodule Inventory.WarehousingTest do
       update_attrs = %{
         address: "some updated address",
         name: "some updated name",
-        tenant_id: "7488a646-e31f-11e4-aace-600308960668"
+        tenant_id: warehouse.tenant_id
       }
 
       assert {:ok, %Warehouse{} = warehouse} =
@@ -109,13 +113,15 @@ defmodule Inventory.WarehousingTest do
 
       assert warehouse.address == "some updated address"
       assert warehouse.name == "some updated name"
-      assert warehouse.tenant_id == "7488a646-e31f-11e4-aace-600308960668"
+      assert warehouse.tenant_id == warehouse.tenant_id
     end
 
     test "update_warehouse/2 with invalid data returns error changeset" do
       warehouse = warehouse_fixture()
       assert {:error, %Ecto.Changeset{}} = Warehousing.update_warehouse(warehouse, @invalid_attrs)
-      assert warehouse == Warehousing.get_warehouse!(warehouse.id)
+
+      assert Map.drop(warehouse, [:company]) ==
+               Map.drop(Warehousing.get_warehouse!(warehouse.id), [:company])
     end
 
     test "delete_warehouse/1 deletes the warehouse" do
@@ -139,33 +145,46 @@ defmodule Inventory.WarehousingTest do
 
     test "list_items/0 returns all items" do
       item = item_fixture()
-      assert Warehousing.list_items() == [item]
+      [result] = Warehousing.list_items()
+      assert Map.drop(result, [:company, :warehouse]) == Map.drop(item, [:company, :warehouse])
     end
 
     test "get_item!/1 returns the item with given id" do
       item = item_fixture()
-      assert Warehousing.get_item!(item.id) == item
+      result = Warehousing.get_item!(item.id)
+      assert Map.drop(result, [:company, :warehouse]) == Map.drop(item, [:company, :warehouse])
     end
 
     test "create_item/1 with valid data creates a item" do
+      tenant_id = Ecto.UUID.generate()
+      ext_attrs = %{tenant_id: tenant_id}
+      warehouse = warehouse_fixture(ext_attrs)
+      company = company_fixture(ext_attrs)
+
       valid_attrs = %{
         description: "some description",
         sku: "some sku",
-        tenant_id: "7488a646-e31f-11e4-aace-600308960662",
         unit: "ea",
-        weight: 42
+        weight: 42,
+        tenant_id: tenant_id
       }
 
-      assert {:ok, %Item{} = item} = Warehousing.create_item(valid_attrs)
+      assert {:ok, %Item{} = item} = Warehousing.create_item(valid_attrs, company, warehouse)
       assert item.description == "some description"
       assert item.sku == "some sku"
-      assert item.tenant_id == "7488a646-e31f-11e4-aace-600308960662"
+      assert item.tenant_id == tenant_id
       assert item.unit == String.to_atom("ea")
       assert item.weight == 42
     end
 
     test "create_item/1 with invalid data returns error changeset" do
-      assert {:error, %Ecto.Changeset{}} = Warehousing.create_item(@invalid_attrs)
+      tenant_id = Ecto.UUID.generate()
+      ext_attrs = %{tenant_id: tenant_id}
+      warehouse = warehouse_fixture(ext_attrs)
+      company = company_fixture(ext_attrs)
+
+      assert {:error, %Ecto.Changeset{}} =
+               Warehousing.create_item(@invalid_attrs, company, warehouse)
     end
 
     test "update_item/2 with valid data updates the item" do
@@ -174,7 +193,7 @@ defmodule Inventory.WarehousingTest do
       update_attrs = %{
         description: "some updated description",
         sku: "some updated sku",
-        tenant_id: "7488a646-e31f-11e4-aace-600308960668",
+        tenant_id: item.tenant_id,
         unit: "pl",
         weight: 43
       }
@@ -182,7 +201,6 @@ defmodule Inventory.WarehousingTest do
       assert {:ok, %Item{} = item} = Warehousing.update_item(item, update_attrs)
       assert item.description == "some updated description"
       assert item.sku == "some updated sku"
-      assert item.tenant_id == "7488a646-e31f-11e4-aace-600308960668"
       assert item.unit == String.to_atom("pl")
       assert item.weight == 43
     end
@@ -190,7 +208,9 @@ defmodule Inventory.WarehousingTest do
     test "update_item/2 with invalid data returns error changeset" do
       item = item_fixture()
       assert {:error, %Ecto.Changeset{}} = Warehousing.update_item(item, @invalid_attrs)
-      assert item == Warehousing.get_item!(item.id)
+
+      assert Map.drop(item, [:warehouse, :company]) ==
+               Map.drop(Warehousing.get_item!(item.id), [:warehouse, :company])
     end
 
     test "delete_item/1 deletes the item" do

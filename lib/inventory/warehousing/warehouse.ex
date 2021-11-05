@@ -1,6 +1,7 @@
 defmodule Inventory.Warehousing.Warehouse do
   use Ecto.Schema
   import Ecto.Changeset
+  alias Ecto.Changeset
   alias Inventory.Warehousing.{Company, Item}
 
   @primary_key {:id, :binary_id, autogenerate: true}
@@ -22,4 +23,10 @@ defmodule Inventory.Warehousing.Warehouse do
     |> validate_required([:name, :address, :tenant_id])
     |> unique_constraint(:address)
   end
+
+  def put_company(%Changeset{valid?: true} = changeset, %Company{} = company) do
+    put_assoc(changeset, :company, company)
+  end
+
+  def put_company(changeset, _company), do: changeset
 end

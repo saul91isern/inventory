@@ -8,7 +8,7 @@ defmodule Inventory.Repo.Migrations.CreateItems do
       add :id, :binary_id, primary_key: true
       add :sku, :string, null: false
       add :tenant_id, :uuid, primary_key: true
-      add :description, :string, null: false
+      add :description, :string
       add :weight, :integer, null: false
       add :unit, :unit_type, null: false
 
@@ -17,14 +17,16 @@ defmodule Inventory.Repo.Migrations.CreateItems do
             on_delete: :nothing,
             type: :binary_id,
             with: [tenant_id: :tenant_id]
-          )
+          ),
+          null: false
 
       add :warehouse_id,
           references(:warehouses,
             on_delete: :nothing,
             type: :binary_id,
             with: [tenant_id: :tenant_id]
-          )
+          ),
+          null: false
 
       timestamps()
     end

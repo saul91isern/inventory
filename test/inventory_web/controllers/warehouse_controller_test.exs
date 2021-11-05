@@ -35,7 +35,9 @@ defmodule InventoryWeb.WarehouseControllerTest do
 
   describe "create warehouse" do
     test "renders warehouse when data is valid", %{conn: conn, tenant_id: tenant_id} do
-      conn = post(conn, Routes.warehouse_path(conn, :create), data: @create_attrs)
+      company = company_fixture(%{tenant_id: tenant_id})
+      create_attrs = Map.put(@create_attrs, :company_id, company.id)
+      conn = post(conn, Routes.warehouse_path(conn, :create), data: create_attrs)
       assert %{"id" => id} = json_response(conn, 201)["data"]
 
       conn = conn |> recycle() |> put_req_header("tenant-id", tenant_id)
@@ -49,8 +51,10 @@ defmodule InventoryWeb.WarehouseControllerTest do
              } = json_response(conn, 200)["data"]
     end
 
-    test "renders errors when data is invalid", %{conn: conn} do
-      conn = post(conn, Routes.warehouse_path(conn, :create), data: @invalid_attrs)
+    test "renders errors when data is invalid", %{conn: conn, tenant_id: tenant_id} do
+      company = company_fixture(%{tenant_id: tenant_id})
+      invalid_attrs = Map.put(@invalid_attrs, :company_id, company.id)
+      conn = post(conn, Routes.warehouse_path(conn, :create), data: invalid_attrs)
       assert json_response(conn, 422)["errors"] != %{}
     end
   end

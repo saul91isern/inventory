@@ -13,7 +13,8 @@ defmodule Inventory.Repo.Migrations.CreateWarehouses do
             on_delete: :nothing,
             type: :binary_id,
             with: [tenant_id: :tenant_id]
-          )
+          ),
+          null: false
 
       timestamps()
     end

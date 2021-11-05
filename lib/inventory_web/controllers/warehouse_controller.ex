@@ -2,7 +2,7 @@ defmodule InventoryWeb.WarehouseController do
   use InventoryWeb, :controller
 
   alias Inventory.Warehousing
-  alias Inventory.Warehousing.Warehouse
+  alias Inventory.Warehousing.{Company, Warehouse}
 
   action_fallback InventoryWeb.FallbackController
 
@@ -13,8 +13,11 @@ defmodule InventoryWeb.WarehouseController do
 
   def create(conn, %{"data" => warehouse_params}) do
     warehouse_params = put_tenant_id(warehouse_params)
+    company_id = Map.get(warehouse_params, "company_id")
 
-    with {:ok, %Warehouse{} = warehouse} <- Warehousing.create_warehouse(warehouse_params) do
+    with %Company{} = company <- Warehousing.get_company!(company_id),
+         {:ok, %Warehouse{} = warehouse} <-
+           Warehousing.create_warehouse(warehouse_params, company) do
       conn
       |> put_status(:created)
       |> put_resp_header("location", Routes.warehouse_path(conn, :show, warehouse))

@@ -146,16 +146,17 @@ defmodule Inventory.Warehousing do
 
   ## Examples
 
-      iex> create_warehouse(%{field: value})
+      iex> create_warehouse(%{field: value}, company)
       {:ok, %Warehouse{}}
 
-      iex> create_warehouse(%{field: bad_value})
+      iex> create_warehouse(%{field: bad_value}, company)
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_warehouse(attrs \\ %{}) do
+  def create_warehouse(attrs \\ %{}, company) do
     %Warehouse{}
     |> Warehouse.changeset(attrs)
+    |> Warehouse.put_company(company)
     |> Repo.insert()
   end
 
@@ -217,8 +218,10 @@ defmodule Inventory.Warehousing do
       [%Item{}, ...]
 
   """
-  def list_items do
-    Repo.all(Item)
+  def list_items(opts \\ []) do
+    Item
+    |> Repo.all()
+    |> Repo.preload(opts[:preload] || [])
   end
 
   @doc """
@@ -235,23 +238,29 @@ defmodule Inventory.Warehousing do
       ** (Ecto.NoResultsError)
 
   """
-  def get_item!(id), do: Repo.get!(Item, id)
+  def get_item!(id, opts \\ []) do
+    Item
+    |> Repo.get!(id)
+    |> Repo.preload(opts[:preload] || [], skip_tenant_id: true)
+  end
 
   @doc """
   Creates a item.
 
   ## Examples
 
-      iex> create_item(%{field: value})
+      iex> create_item(%{field: value}, company, warehouse)
       {:ok, %Item{}}
 
       iex> create_item(%{field: bad_value})
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_item(attrs \\ %{}) do
+  def create_item(attrs \\ %{}, company, warehouse) do
     %Item{}
     |> Item.changeset(attrs)
+    |> Item.put_company(company)
+    |> Item.put_warehouse(warehouse)
     |> Repo.insert()
   end
 

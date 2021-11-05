@@ -28,6 +28,15 @@ defmodule Inventory.WarehousingFixtures do
   def warehouse_fixture(attrs \\ %{}) do
     tenant_id = Ecto.UUID.generate()
 
+    ext_attrs =
+      attrs
+      |> Map.take([:tenant_id])
+      |> Enum.into(%{
+        tenant_id: tenant_id
+      })
+
+    company = company_fixture(ext_attrs)
+
     {:ok, warehouse} =
       attrs
       |> Enum.into(%{
@@ -35,7 +44,7 @@ defmodule Inventory.WarehousingFixtures do
         name: "some name",
         tenant_id: tenant_id
       })
-      |> Inventory.Warehousing.create_warehouse()
+      |> Inventory.Warehousing.create_warehouse(company)
 
     Inventory.Repo.put_tenant_id(warehouse.tenant_id)
 
@@ -48,6 +57,16 @@ defmodule Inventory.WarehousingFixtures do
   def item_fixture(attrs \\ %{}) do
     tenant_id = Ecto.UUID.generate()
 
+    ext_attrs =
+      attrs
+      |> Map.take([:tenant_id])
+      |> Enum.into(%{
+        tenant_id: tenant_id
+      })
+
+    warehouse = warehouse_fixture(ext_attrs)
+    company = company_fixture(ext_attrs)
+
     {:ok, item} =
       attrs
       |> Enum.into(%{
@@ -57,7 +76,7 @@ defmodule Inventory.WarehousingFixtures do
         unit: "ca",
         weight: 42
       })
-      |> Inventory.Warehousing.create_item()
+      |> Inventory.Warehousing.create_item(company, warehouse)
 
     Inventory.Repo.put_tenant_id(item.tenant_id)
     item
