@@ -218,8 +218,15 @@ defmodule Inventory.Warehousing do
       [%Item{}, ...]
 
   """
-  def list_items(opts \\ []) do
-    Item
+  def list_items(params \\ %{}, opts \\ []) do
+    params
+    |> Enum.reduce(
+      Item,
+      fn
+        {:company_id, company_id}, q -> where(q, [w], w.company_id == ^company_id)
+        _, q -> q
+      end
+    )
     |> Repo.all()
     |> Repo.preload(opts[:preload] || [])
   end

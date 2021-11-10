@@ -156,6 +156,13 @@ defmodule Inventory.WarehousingTest do
       assert Map.drop(result, [:company, :warehouse]) == Map.drop(item, [:company, :warehouse])
     end
 
+    test "list_items/1 returns all items" do
+      item = item_fixture()
+      company_id = item.company_id
+      [result] = Warehousing.list_items(%{company_id: company_id})
+      assert Map.drop(result, [:company, :warehouse]) == Map.drop(item, [:company, :warehouse])
+    end
+
     test "get_item!/1 returns the item with given id" do
       item = item_fixture()
       result = Warehousing.get_item!(item.id)
