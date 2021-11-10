@@ -36,10 +36,13 @@ defmodule InventoryWeb.ItemControllerTest do
       assert json_response(conn, 200)["data"] == []
     end
 
-    test "lists all items filtered by company id", %{conn: conn, tenant_id: tenant_id} do
+    test "lists all items filtered by company id and sku", %{conn: conn, tenant_id: tenant_id} do
       item = item_fixture(%{tenant_id: tenant_id})
       company_id = item.company_id
-      conn = get(conn, Routes.item_path(conn, :index, company_id: company_id))
+      sku = item.sku
+
+      conn =
+        get(conn, Routes.item_path(conn, :index, company_id: company_id, filter: %{sku: sku}))
 
       assert json_response(conn, 200)["data"] == [
                %{

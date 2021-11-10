@@ -51,8 +51,17 @@ defmodule InventoryWeb.ItemController do
   end
 
   defp item_params(params) do
-    Enum.reduce(params, %{}, fn {"company_id", company_id}, acc ->
-      Map.put(acc, :company_id, company_id)
+    filter = Map.get(params, "filter", %{})
+
+    params
+    |> Map.delete("filter")
+    |> Map.merge(filter)
+    |> Enum.reduce(%{}, fn
+      {"company_id", company_id}, acc ->
+        Map.put(acc, :company_id, company_id)
+
+      {"sku", sku}, acc ->
+        Map.put(acc, :sku, sku)
     end)
   end
 end
