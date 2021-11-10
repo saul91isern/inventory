@@ -31,6 +31,18 @@ defmodule InventoryWeb.WarehouseControllerTest do
       conn = get(conn, Routes.warehouse_path(conn, :index))
       assert json_response(conn, 200)["data"] == []
     end
+
+    test "lists all warehouses of a company", %{conn: conn, tenant_id: tenant_id} do
+      warehouse = warehouse_fixture(%{tenant_id: tenant_id})
+      company_id = warehouse.company_id
+      id = warehouse.id
+      name = warehouse.name
+      address = warehouse.address
+      conn = get(conn, Routes.warehouse_path(conn, :index, company_id: company_id))
+
+      assert [%{"address" => ^address, "id" => ^id, "name" => ^name, "tenant_id" => ^tenant_id}] =
+               json_response(conn, 200)["data"]
+    end
   end
 
   describe "create warehouse" do

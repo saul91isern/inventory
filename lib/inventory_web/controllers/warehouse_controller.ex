@@ -7,6 +7,7 @@ defmodule InventoryWeb.WarehouseController do
   action_fallback InventoryWeb.FallbackController
 
   def index(conn, params) do
+    params = warehouse_params(params)
     warehouses = Warehousing.list_warehouses(params)
     render(conn, "index.json", warehouses: warehouses)
   end
@@ -45,5 +46,11 @@ defmodule InventoryWeb.WarehouseController do
     with {:ok, %Warehouse{}} <- Warehousing.delete_warehouse(warehouse) do
       send_resp(conn, :no_content, "")
     end
+  end
+
+  defp warehouse_params(params) do
+    Enum.reduce(params, %{}, fn {"company_id", company_id}, acc ->
+      Map.put(acc, :company_id, company_id)
+    end)
   end
 end

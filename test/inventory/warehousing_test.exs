@@ -70,7 +70,14 @@ defmodule Inventory.WarehousingTest do
 
     test "list_warehouses/0 returns all warehouses" do
       warehouse = warehouse_fixture()
-      [result] = Warehousing.list_warehouses()
+      assert [result] = Warehousing.list_warehouses()
+      assert Map.drop(result, [:company]) == Map.drop(warehouse, [:company])
+    end
+
+    test "list_warehouses/1 returns all warehouses for a given company" do
+      warehouse = warehouse_fixture()
+      company_id = warehouse.company_id
+      assert [result] = Warehousing.list_warehouses(%{company_id: company_id})
       assert Map.drop(result, [:company]) == Map.drop(warehouse, [:company])
     end
 
