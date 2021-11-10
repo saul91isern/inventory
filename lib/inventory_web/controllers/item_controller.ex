@@ -12,10 +12,12 @@ defmodule InventoryWeb.ItemController do
     render(conn, "index.json", items: items)
   end
 
-  def create(conn, %{"data" => item_params}) do
+  def create(conn, %{
+        "company_id" => company_id,
+        "warehouse_id" => warehouse_id,
+        "data" => item_params
+      }) do
     item_params = put_tenant_id(item_params)
-    company_id = Map.get(item_params, "company_id")
-    warehouse_id = Map.get(item_params, "warehouse_id")
 
     with %Company{} = company <- Warehousing.get_company!(company_id),
          %Warehouse{} = warehouse <- Warehousing.get_warehouse!(warehouse_id),
