@@ -10,10 +10,10 @@ defmodule InventoryWeb.Router do
     pipe_through :api
 
     resources "/companies", CompanyController, except: [:new, :edit] do
-      resources "/warehouses", WarehouseController, only: [:index]
+      resources "/warehouses", WarehouseController, only: [:index, :create]
     end
 
-    resources "/warehouses", WarehouseController, except: [:new, :edit]
+    resources "/warehouses", WarehouseController, except: [:create, :new, :edit]
     resources "/items", ItemController, except: [:new, :edit]
   end
 

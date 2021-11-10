@@ -12,9 +12,8 @@ defmodule InventoryWeb.WarehouseController do
     render(conn, "index.json", warehouses: warehouses)
   end
 
-  def create(conn, %{"data" => warehouse_params}) do
+  def create(conn, %{"company_id" => company_id, "data" => warehouse_params}) do
     warehouse_params = put_tenant_id(warehouse_params)
-    company_id = Map.get(warehouse_params, "company_id")
 
     with %Company{} = company <- Warehousing.get_company!(company_id),
          {:ok, %Warehouse{} = warehouse} <-
