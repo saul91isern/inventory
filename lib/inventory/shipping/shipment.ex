@@ -3,6 +3,7 @@ defmodule Inventory.Shipping.Shipment do
   import Ecto.Changeset
 
   alias Ecto.Changeset
+  alias Inventory.Shipping.LineItem
   alias Inventory.Warehousing.Company
 
   @primary_key {:id, :binary_id, autogenerate: true}
@@ -14,6 +15,7 @@ defmodule Inventory.Shipping.Shipment do
     field :tenant_id, Ecto.UUID
     field :tracking_number, :string
     belongs_to :company, Company
+    has_many :line_items, LineItem
 
     timestamps()
   end
@@ -22,6 +24,7 @@ defmodule Inventory.Shipping.Shipment do
   def changeset(shipment, attrs) do
     shipment
     |> cast(attrs, [:tenant_id, :ship_date, :estimated_delivery_date, :carrier, :tracking_number])
+    |> cast_assoc(:line_items, with: &LineItem.changeset/2)
     |> validate_required([
       :tenant_id,
       :ship_date,

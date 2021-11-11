@@ -32,6 +32,28 @@ defmodule Inventory.ShippingFixtures do
       })
       |> Inventory.Shipping.create_shipment(company)
 
+    Inventory.Repo.put_tenant_id(shipment.tenant_id)
+
     shipment
+  end
+
+  @doc """
+  Generate a line_item.
+  """
+  def line_item_fixture(attrs \\ %{}) do
+    tenant_id = Ecto.UUID.generate()
+
+    {:ok, line_item} =
+      attrs
+      |> Enum.into(%{
+        quantity: 42,
+        tenant_id: tenant_id,
+        unit: "some unit"
+      })
+      |> Inventory.Shipping.create_line_item()
+
+    Inventory.Repo.put_tenant_id(line_item.tenant_id)
+
+    line_item
   end
 end

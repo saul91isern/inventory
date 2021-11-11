@@ -50,7 +50,8 @@ defmodule InventoryWeb.ShipmentControllerTest do
       assert json_response(conn, 200)["data"] == [
                %{
                  "carrier" => shipment.carrier,
-                 "estimated_delivery_date" => DateTime.to_iso8601(shipment.estimated_delivery_date),
+                 "estimated_delivery_date" =>
+                   DateTime.to_iso8601(shipment.estimated_delivery_date),
                  "id" => shipment.id,
                  "ship_date" => DateTime.to_iso8601(shipment.ship_date),
                  "tenant_id" => tenant_id,

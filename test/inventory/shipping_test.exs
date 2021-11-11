@@ -93,4 +93,71 @@ defmodule Inventory.ShippingTest do
       assert %Ecto.Changeset{} = Shipping.change_shipment(shipment)
     end
   end
+
+  describe "line_items" do
+    alias Inventory.Shipping.LineItem
+
+    import Inventory.ShippingFixtures
+
+    @invalid_attrs %{quantity: nil, tenant_id: nil, unit: nil}
+
+    test "list_line_items/0 returns all line_items" do
+      line_item = line_item_fixture()
+      assert Shipping.list_line_items() == [line_item]
+    end
+
+    test "get_line_item!/1 returns the line_item with given id" do
+      line_item = line_item_fixture()
+      assert Shipping.get_line_item!(line_item.id) == line_item
+    end
+
+    test "create_line_item/1 with valid data creates a line_item" do
+      valid_attrs = %{
+        quantity: 42,
+        tenant_id: "7488a646-e31f-11e4-aace-600308960662",
+        unit: "some unit"
+      }
+
+      assert {:ok, %LineItem{} = line_item} = Shipping.create_line_item(valid_attrs)
+      assert line_item.quantity == 42
+      assert line_item.tenant_id == "7488a646-e31f-11e4-aace-600308960662"
+      assert line_item.unit == "some unit"
+    end
+
+    test "create_line_item/1 with invalid data returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = Shipping.create_line_item(@invalid_attrs)
+    end
+
+    test "update_line_item/2 with valid data updates the line_item" do
+      line_item = line_item_fixture()
+
+      update_attrs = %{
+        quantity: 43,
+        tenant_id: "7488a646-e31f-11e4-aace-600308960668",
+        unit: "some updated unit"
+      }
+
+      assert {:ok, %LineItem{} = line_item} = Shipping.update_line_item(line_item, update_attrs)
+      assert line_item.quantity == 43
+      assert line_item.tenant_id == "7488a646-e31f-11e4-aace-600308960668"
+      assert line_item.unit == "some updated unit"
+    end
+
+    test "update_line_item/2 with invalid data returns error changeset" do
+      line_item = line_item_fixture()
+      assert {:error, %Ecto.Changeset{}} = Shipping.update_line_item(line_item, @invalid_attrs)
+      assert line_item == Shipping.get_line_item!(line_item.id)
+    end
+
+    test "delete_line_item/1 deletes the line_item" do
+      line_item = line_item_fixture()
+      assert {:ok, %LineItem{}} = Shipping.delete_line_item(line_item)
+      assert_raise Ecto.NoResultsError, fn -> Shipping.get_line_item!(line_item.id) end
+    end
+
+    test "change_line_item/1 returns a line_item changeset" do
+      line_item = line_item_fixture()
+      assert %Ecto.Changeset{} = Shipping.change_line_item(line_item)
+    end
+  end
 end
