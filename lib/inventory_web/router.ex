@@ -22,6 +22,7 @@ defmodule InventoryWeb.Router do
     end
 
     resources "/items", ItemController, except: [:new, :edit]
+    resources "/shipments", ShipmentController, except: [:new, :edit]
   end
 
   # Enables the Swoosh mailbox preview in development.
