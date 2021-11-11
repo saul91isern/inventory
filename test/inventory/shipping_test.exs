@@ -22,6 +22,12 @@ defmodule Inventory.ShippingTest do
       assert Map.delete(result, :company) == Map.delete(shipment, :company)
     end
 
+    test "list_shipments/1 returns all shipments with filters" do
+      shipment = shipment_fixture()
+      assert [result] = Shipping.list_shipments(%{company_id: shipment.company_id})
+      assert Map.delete(result, :company) == Map.delete(shipment, :company)
+    end
+
     test "get_shipment!/1 returns the shipment with given id" do
       shipment = shipment_fixture()
       result = Shipping.get_shipment!(shipment.id)
