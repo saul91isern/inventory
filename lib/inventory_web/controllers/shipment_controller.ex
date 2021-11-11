@@ -8,8 +8,10 @@ defmodule InventoryWeb.ShipmentController do
 
   action_fallback InventoryWeb.FallbackController
 
-  def index(conn, _params) do
-    shipments = Shipping.list_shipments()
+  def index(conn, params) do
+    params = shipment_params(params)
+
+    shipments = Shipping.list_shipments(params)
     render(conn, "index.json", shipments: shipments)
   end
 
@@ -44,5 +46,15 @@ defmodule InventoryWeb.ShipmentController do
     with {:ok, %Shipment{}} <- Shipping.delete_shipment(shipment) do
       send_resp(conn, :no_content, "")
     end
+  end
+
+  defp shipment_params(params) do
+    Enum.reduce(params, %{}, fn
+      {"company_id", company_id}, acc ->
+        Map.put(acc, :company_id, company_id)
+
+      _, acc ->
+        acc
+    end)
   end
 end

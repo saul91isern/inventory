@@ -13,12 +13,20 @@ defmodule Inventory.Shipping do
 
   ## Examples
 
-      iex> list_shipments()
+      iex> list_shipments(params)
       [%Shipment{}, ...]
 
   """
-  def list_shipments do
-    Repo.all(Shipment)
+  def list_shipments(params \\ %{}) do
+    params
+    |> Enum.reduce(
+      Shipment,
+      fn
+        {:company_id, company_id}, q -> where(q, [w], w.company_id == ^company_id)
+        _, q -> q
+      end
+    )
+    |> Repo.all()
   end
 
   @doc """

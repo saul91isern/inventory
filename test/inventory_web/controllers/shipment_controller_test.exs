@@ -41,6 +41,23 @@ defmodule InventoryWeb.ShipmentControllerTest do
       conn = get(conn, Routes.shipment_path(conn, :index))
       assert json_response(conn, 200)["data"] == []
     end
+
+    test "lists all shipments filtered by company id", %{conn: conn, tenant_id: tenant_id} do
+      shipment = shipment_fixture(%{tenant_id: tenant_id})
+
+      conn = get(conn, Routes.company_shipment_path(conn, :index, shipment.company_id))
+
+      assert json_response(conn, 200)["data"] == [
+               %{
+                 "carrier" => shipment.carrier,
+                 "estimated_delivery_date" => DateTime.to_iso8601(shipment.estimated_delivery_date),
+                 "id" => shipment.id,
+                 "ship_date" => DateTime.to_iso8601(shipment.ship_date),
+                 "tenant_id" => tenant_id,
+                 "tracking_number" => shipment.tracking_number
+               }
+             ]
+    end
   end
 
   describe "create shipment" do

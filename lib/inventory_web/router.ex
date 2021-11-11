@@ -15,7 +15,7 @@ defmodule InventoryWeb.Router do
       end
 
       resources "/items", ItemController, only: [:index]
-      resources "/shipments", ShipmentController, only: [:create]
+      resources "/shipments", ShipmentController, only: [:create, :index]
     end
 
     resources "/warehouses", WarehouseController, except: [:create, :new, :edit] do
