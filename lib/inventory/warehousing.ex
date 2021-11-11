@@ -225,6 +225,7 @@ defmodule Inventory.Warehousing do
       fn
         {:company_id, company_id}, q -> where(q, [w], w.company_id == ^company_id)
         {:sku, sku}, q -> where(q, [w], w.sku == ^sku)
+        {:warehouse_id, warehouse_id}, q -> where(q, [w], w.warehouse_id == ^warehouse_id)
         _, q -> q
       end
     )

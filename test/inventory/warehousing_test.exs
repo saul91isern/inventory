@@ -159,11 +159,16 @@ defmodule Inventory.WarehousingTest do
     test "list_items/1 returns all items with filters" do
       item = item_fixture()
       company_id = item.company_id
+      warehouse_id = item.warehouse_id
       sku = item.sku
+
       assert [result] = Warehousing.list_items(%{company_id: company_id})
       assert Map.drop(result, [:company, :warehouse]) == Map.drop(item, [:company, :warehouse])
 
       assert [result] = Warehousing.list_items(%{sku: sku})
+      assert Map.drop(result, [:company, :warehouse]) == Map.drop(item, [:company, :warehouse])
+
+      assert [result] = Warehousing.list_items(%{warehouse_id: warehouse_id})
       assert Map.drop(result, [:company, :warehouse]) == Map.drop(item, [:company, :warehouse])
 
       assert [] = Warehousing.list_items(%{sku: "foo"})

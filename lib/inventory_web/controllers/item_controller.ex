@@ -60,6 +60,9 @@ defmodule InventoryWeb.ItemController do
       {"company_id", company_id}, acc ->
         Map.put(acc, :company_id, company_id)
 
+      {"warehouse_id", warehouse_id}, acc ->
+        Map.put(acc, :warehouse_id, warehouse_id)
+
       {"sku", sku}, acc ->
         Map.put(acc, :sku, sku)
     end)

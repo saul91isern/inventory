@@ -55,6 +55,24 @@ defmodule InventoryWeb.ItemControllerTest do
                }
              ]
     end
+
+    test "lists all items filtered by warehouse_id", %{conn: conn, tenant_id: tenant_id} do
+      item = item_fixture(%{tenant_id: tenant_id})
+      warehouse_id = item.warehouse_id
+
+      conn = get(conn, Routes.warehouse_item_path(conn, :index, warehouse_id))
+
+      assert json_response(conn, 200)["data"] == [
+               %{
+                 "description" => item.description,
+                 "id" => item.id,
+                 "sku" => item.sku,
+                 "tenant_id" => tenant_id,
+                 "unit" => Atom.to_string(item.unit),
+                 "weight" => item.weight
+               }
+             ]
+    end
   end
 
   describe "create item" do
