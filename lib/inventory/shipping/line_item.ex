@@ -10,7 +10,7 @@ defmodule Inventory.Shipping.LineItem do
     field :quantity, :integer
     field :tenant_id, Ecto.UUID
     field :unit, :string
-    field :item_id, :binary_id
+    field :item_id, Ecto.UUID
     belongs_to :shipment, Shipment
 
     timestamps()
@@ -19,7 +19,7 @@ defmodule Inventory.Shipping.LineItem do
   @doc false
   def changeset(line_item, attrs) do
     line_item
-    |> cast(attrs, [:tenant_id, :quantity, :unit])
+    |> cast(attrs, [:tenant_id, :quantity, :unit, :item_id])
     |> validate_required([:tenant_id, :quantity, :unit])
   end
 end

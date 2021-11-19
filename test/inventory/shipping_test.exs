@@ -53,6 +53,33 @@ defmodule Inventory.ShippingTest do
       assert shipment.tracking_number == "some tracking_number"
     end
 
+    test "create_shipment/1 with line items creates the shipment" do
+      item = %{company: company} = item_fixture()
+
+      valid_attrs = %{
+        carrier: "some carrier",
+        estimated_delivery_date: ~U[2021-11-10 12:45:00.000000Z],
+        ship_date: ~U[2021-11-10 12:45:00.000000Z],
+        tracking_number: "some tracking_number",
+        tenant_id: company.tenant_id,
+        line_items: [
+          %{
+            "quantity" => 1,
+            "unit" => "foo",
+            "tenant_id" => company.tenant_id,
+            "item_id" => item.id
+          }
+        ]
+      }
+
+      assert {:ok, %Shipment{} = shipment} = Shipping.create_shipment(valid_attrs, company)
+      assert shipment.carrier == "some carrier"
+      assert shipment.estimated_delivery_date == ~U[2021-11-10 12:45:00.000000Z]
+      assert shipment.ship_date == ~U[2021-11-10 12:45:00.000000Z]
+      assert shipment.tenant_id == company.tenant_id
+      assert shipment.tracking_number == "some tracking_number"
+    end
+
     test "create_shipment/1 with invalid data returns error changeset" do
       assert {:error, %Ecto.Changeset{}} = Shipping.create_shipment(@invalid_attrs)
     end

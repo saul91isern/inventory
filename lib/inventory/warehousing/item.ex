@@ -2,6 +2,7 @@ defmodule Inventory.Warehousing.Item do
   use Ecto.Schema
   import Ecto.Changeset
   alias Ecto.Changeset
+  alias Inventory.Shipping.LineItem
   alias Inventory.Warehousing.{Company, Warehouse}
 
   @primary_key {:id, :binary_id, autogenerate: true}
@@ -14,6 +15,7 @@ defmodule Inventory.Warehousing.Item do
     field :weight, :integer
     belongs_to :company, Company
     belongs_to :warehouse, Warehouse
+    has_many :line_items, LineItem
 
     timestamps()
   end
