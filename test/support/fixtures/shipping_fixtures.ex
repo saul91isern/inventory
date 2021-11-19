@@ -48,7 +48,7 @@ defmodule Inventory.ShippingFixtures do
       |> Enum.into(%{
         quantity: 42,
         tenant_id: tenant_id,
-        unit: "some unit"
+        unit: "pl"
       })
       |> Inventory.Shipping.create_line_item()
 

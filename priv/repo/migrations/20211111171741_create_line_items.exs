@@ -6,7 +6,7 @@ defmodule Inventory.Repo.Migrations.CreateLineItems do
       add :id, :binary_id, primary_key: true
       add :tenant_id, :uuid, primary_key: true
       add :quantity, :integer, null: false
-      add :unit, :string, null: false
+      add :unit, :unit_type, null: false
 
       add :shipment_id,
           references(:shipments,

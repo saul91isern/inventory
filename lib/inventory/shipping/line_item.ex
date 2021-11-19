@@ -9,7 +9,7 @@ defmodule Inventory.Shipping.LineItem do
   schema "line_items" do
     field :quantity, :integer
     field :tenant_id, Ecto.UUID
-    field :unit, :string
+    field :unit, Ecto.Enum, values: [:ea, :ca, :pl]
     field :item_id, Ecto.UUID
     belongs_to :shipment, Shipment
 

@@ -65,7 +65,7 @@ defmodule Inventory.ShippingTest do
         line_items: [
           %{
             "quantity" => 1,
-            "unit" => "foo",
+            "unit" => "pl",
             "tenant_id" => company.tenant_id,
             "item_id" => item.id
           }
@@ -142,13 +142,13 @@ defmodule Inventory.ShippingTest do
       valid_attrs = %{
         quantity: 42,
         tenant_id: "7488a646-e31f-11e4-aace-600308960662",
-        unit: "some unit"
+        unit: "pl"
       }
 
       assert {:ok, %LineItem{} = line_item} = Shipping.create_line_item(valid_attrs)
       assert line_item.quantity == 42
       assert line_item.tenant_id == "7488a646-e31f-11e4-aace-600308960662"
-      assert line_item.unit == "some unit"
+      assert line_item.unit == :pl
     end
 
     test "create_line_item/1 with invalid data returns error changeset" do
@@ -161,13 +161,13 @@ defmodule Inventory.ShippingTest do
       update_attrs = %{
         quantity: 43,
         tenant_id: "7488a646-e31f-11e4-aace-600308960668",
-        unit: "some updated unit"
+        unit: "ca"
       }
 
       assert {:ok, %LineItem{} = line_item} = Shipping.update_line_item(line_item, update_attrs)
       assert line_item.quantity == 43
       assert line_item.tenant_id == "7488a646-e31f-11e4-aace-600308960668"
-      assert line_item.unit == "some updated unit"
+      assert line_item.unit == :ca
     end
 
     test "update_line_item/2 with invalid data returns error changeset" do

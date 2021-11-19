@@ -19,14 +19,19 @@ defmodule InventoryWeb.LineItemControllerTest do
       shipment =
         %{line_items: [%{id: id, unit: unit, quantity: quantity}]} =
         shipment_fixture(%{
-          line_items: [%{"quantity" => 1, "unit" => "foo", "tenant_id" => tenant_id}],
+          line_items: [%{"quantity" => 1, "unit" => "pl", "tenant_id" => tenant_id}],
           tenant_id: tenant_id
         })
 
       conn = get(conn, Routes.shipment_line_item_path(conn, :index, shipment.id))
 
       assert json_response(conn, 200)["data"] == [
-               %{"id" => id, "quantity" => quantity, "unit" => unit, "tenant_id" => tenant_id}
+               %{
+                 "id" => id,
+                 "quantity" => quantity,
+                 "unit" => Atom.to_string(unit),
+                 "tenant_id" => tenant_id
+               }
              ]
     end
   end
